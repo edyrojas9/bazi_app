@@ -1,8 +1,6 @@
-
 import streamlit as st
 from fpdf import FPDF
 from datetime import datetime
-from bazi_calculator import BaziCalculator  # Asumimos que se instala una librería externa
 
 # Clase PDF para generar el informe
 class PDF(FPDF):
@@ -35,15 +33,12 @@ class AnalisisEsoterico:
         self.persona = persona
 
     def generar_bazi(self):
-        fecha = datetime.strptime(self.persona.fecha_nacimiento + " " + self.persona.hora_nacimiento, "%Y-%m-%d %H:%M")
-        bazi = BaziCalculator()
-        carta = bazi.get_bazi(fecha, self.persona.lugar_nacimiento)
-
+        # Simulación de análisis BaZi básico
         self.persona.datos_bazi = {
-            "dia_maestro": carta['day_master'],
-            "pilares": carta['pillars'],
-            "elementos": carta['elements'],
-            "estructura": f"Día Maestro: {carta['day_master']}, Pilares: {carta['pillars']}"
+            "dia_maestro": "Yi (Madera Yin)",
+            "pilares": "Año: Ren Xu, Mes: Ji Chou, Día: Yi Wei, Hora: Ren Shen",
+            "elementos": ["Agua", "Tierra", "Madera", "Metal"],
+            "estructura": "Día Maestro: Yi (Madera Yin), personalidad adaptable, sensible, creativa."
         }
 
     def generar_astrologia_occidental(self):
