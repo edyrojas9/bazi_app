@@ -1,6 +1,8 @@
+
 import streamlit as st
 from fpdf import FPDF
 from datetime import datetime
+import io
 
 # Clase PDF para generar el informe
 class PDF(FPDF):
@@ -72,7 +74,7 @@ st.write("Completa tus datos para recibir un análisis personalizado y descargar
 
 with st.form("formulario"):
     nombre = st.text_input("Nombre completo")
-    fecha_nacimiento = st.date_input("Fecha de nacimiento")
+    fecha_nacimiento = st.date_input("Fecha de nacimiento", min_value=datetime(1900, 1, 1), max_value=datetime.today())
     hora_nacimiento = st.text_input("Hora de nacimiento (HH:MM)")
     lugar_nacimiento = st.text_input("Lugar de nacimiento")
     genero = st.selectbox("Género", ["masculino", "femenino"])
@@ -90,7 +92,7 @@ if enviar:
     for rec in resultado['recomendaciones']:
         st.write(f"- {rec}")
 
-    # Generar PDF
+    # Generar PDF en memoria
     pdf = PDF()
     pdf.add_page()
     pdf.add_section("Nombre", nombre)
@@ -100,8 +102,9 @@ if enviar:
     pdf.add_section("Poder Personal", resultado['poder_personal'])
     pdf.add_section("Recomendaciones", "\n".join(resultado['recomendaciones']))
 
-    pdf_path = f"/mnt/data/Informe_Esoterico_{nombre.replace(' ', '_')}.pdf"
-    pdf.output(pdf_path)
+    pdf_buffer = io.BytesIO()
+    pdf.output(pdf_buffer)
+    pdf_buffer.seek(0)
 
     st.success("Informe PDF generado correctamente.")
-    st.download_button("Descargar PDF", data=open(pdf_path, "rb"), file_name=f"Informe_Esoterico_{nombre}.pdf")
+    st.download_button("Descargar PDF", data=pdf_buffer, file_name=f"Informe_Esoterico_{nombre}.pdf", mime="application/pdf")
